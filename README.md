@@ -14,6 +14,8 @@
 - Python 3.11+
 - Google Chrome
 
+- API key от Anthropic
+
 ## Установка
 
 ```bash
@@ -22,7 +24,7 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Скопируй `.env.example` в `.env` и вставь свой ключ:
+Скопируй `.env.example` в `.env` и вставь свой ключ от Anthropic:
 
 ```bash
 copy .env.example .env
@@ -30,15 +32,13 @@ copy .env.example .env
 
 ## Запуск
 
-1. Запусти Chrome с отладочным портом:
-   ```
-   start_chrome_debug.bat
-   ```
+1. Открой в проводнике этот проект и запусти start_chrome_debug.bat(запустится скрипт, который закроет все окна chrome и откроет chrome по новой для скрипта)
 
 2. Запусти агента:
    ```bash
    python main.py
    ```
+2.1 Если хотите дать задачу, где нужна авторизация, надо авторизоваться предварительно для его выполнения 
 
 3. Введи задачу на естественном языке, например:
    ```
