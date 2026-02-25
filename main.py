@@ -35,8 +35,6 @@ async def wait_for_chrome(retries: int = 15, delay: float = 1.0) -> bool:
     return False
 
 
-browser = Browser(cdp_url=CDP_URL)
-
 controller = Controller()
 
 
@@ -57,13 +55,14 @@ SECURITY_RULE = (
 
 async def run_agent(task: str) -> None:
     llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0.0)
+    browser = Browser(cdp_url=CDP_URL)
     agent = Agent(
         task=task,
         llm=llm,
         browser=browser,
         extend_system_message=SECURITY_RULE,
         controller=controller,
-        use_vision=False,
+        use_vision=True,
         max_history_items=10,
     )
     try:
