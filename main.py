@@ -4,16 +4,14 @@ import asyncio
 
 load_dotenv()
 
+# Подключаемся к уже запущенному Chrome (запусти start_chrome_debug.bat перед стартом скрипта)
 browser = Browser(
-    executable_path=r'C:\Program Files\Google\Chrome\Application\chrome.exe',
-    user_data_dir=r'C:\Users\kkosherkaa\AppData\Local\Google\Chrome\User Data',
-    profile_directory='Default',
-    headless=False,
+    cdp_url='http://localhost:9222',
 )
 
 async def main():
     llm = ChatAnthropic(model='claude-sonnet-4-5', temperature=0.0)
-    task = "Войди в последнее мое письмо в mail.ru"
+    task = "Прочитай последние 10 писем в почте mail.ru и удали спам"
     agent = Agent(
         task=task,
         llm=llm,
