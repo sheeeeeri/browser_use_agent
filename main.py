@@ -2,6 +2,7 @@ import asyncio
 import logging
 import sys
 
+import httpx
 from browser_use import Agent, Browser, Controller
 from browser_use.llm import ChatAnthropic
 from dotenv import load_dotenv
@@ -15,7 +16,26 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-browser = Browser(cdp_url="http://localhost:9222")
+CDP_URL = "http://localhost:9222"
+
+
+async def wait_for_chrome(retries: int = 15, delay: float = 1.0) -> bool:
+    """Ждёт, пока Chrome откроет отладочный порт 9222."""
+    for attempt in range(1, retries + 1):
+        try:
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                resp = await client.get(f"{CDP_URL}/json/version")
+                if resp.status_code == 200:
+                    logger.info("Chrome доступен на порту 9222.")
+                    return True
+        except Exception:
+            pass
+        logger.info("Ожидание Chrome... попытка %d/%d", attempt, retries)
+        await asyncio.sleep(delay)
+    return False
+
+
+browser = Browser(cdp_url=CDP_URL)
 
 controller = Controller()
 
@@ -58,6 +78,13 @@ async def run_agent(task: str) -> None:
 
 
 async def main_loop() -> None:
+    if not await wait_for_chrome():
+        logger.error(
+            "Chrome недоступен на порту 9222. "
+            "Запустите start_chrome_debug.bat и повторите попытку."
+        )
+        return
+
     while True:
         try:
             user_task = input("\nВведите задачу (или 'выход' для завершения): ").strip()
